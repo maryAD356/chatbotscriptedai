@@ -178,22 +178,22 @@ function renderGate(errorMsg){
       </div>
     </div>
   `;
- const tryUnlock = async ()=>{
-  const pass = input.value.trim();
-  if(!pass){
-    renderGate("Please enter the passphrase.");
-    return;
-  }
-  btn.disabled = true; btn.textContent = "Checking...";
-  adminPass = pass;
-  try{ sessions = await fetchSessions(); renderMain(); }
-  catch(e){ renderGate(e.message === "unauthorized" ? "That passphrase doesn't match. Try again." : "Couldn't reach the study server."); }
-};
+  const input = document.getElementById("passInput");
+  const btn = document.getElementById("unlockBtn");
+  const tryUnlock = async ()=>{
+    const pass = input.value.trim();
+    if(!pass){
+      renderGate("Please enter the passphrase.");
+      return;
+    }
+    btn.disabled = true; btn.textContent = "Checking...";
+    adminPass = pass;
+    try{ sessions = await fetchSessions(); renderMain(); }
+    catch(e){ renderGate(e.message === "unauthorized" ? "That passphrase doesn't match. Try again." : "Couldn't reach the study server."); }
+  };
   btn.addEventListener("click", tryUnlock);
   input.addEventListener("keydown", e=>{ if(e.key==="Enter") tryUnlock(); });
   input.focus();
-}
-
 function renderMain(){
   const app = document.getElementById("app");
   const filtered = sessions.filter(s => s.pid.toLowerCase().includes(searchTerm.toLowerCase()));
