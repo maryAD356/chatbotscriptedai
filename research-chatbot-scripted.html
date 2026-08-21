@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Workplace Advice &amp; Support</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#0A5E4E; --green-deep:#073F34; --orange:#E85D04; --orange-deep:#C24C03;
+    --mustard:#F2C14E; --bg:#FFFDF8; --panel:#FFFFFF; --text:#171717; --text-soft:#5A5750; --line:#E4DFD3;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:Arial, Helvetica, sans-serif;min-height:100vh;display:flex;flex-direction:column;}
+  h1,h2,h3{font-family:'Playfair Display', Georgia, serif;font-weight:600;margin:0;}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:2px solid var(--green);background:var(--panel);}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand .mark{width:11px;height:11px;background:var(--orange);display:inline-block;}
+  .brand h1{font-size:18px;letter-spacing:0.01em;color:var(--green-deep);}
+  .status-chip{font-family:'Courier New', monospace;font-size:11px;letter-spacing:0.03em;color:var(--text-soft);border:1px solid var(--line);padding:5px 10px;border-radius:4px;}
+
+  .wrap{flex:1;display:flex;flex-direction:column;max-width:700px;width:100%;margin:0 auto;padding:0 22px;}
+
+  .landing{max-width:560px;margin:56px auto;padding:0 20px;}
+  .landing-card{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--green);border-radius:6px;padding:38px 36px 34px 36px;}
+  .landing-card h2{font-size:28px;line-height:1.25;color:var(--green-deep);margin-bottom:14px;}
+  .landing-card p{font-size:15px;line-height:1.65;color:var(--text-soft);margin-bottom:16px;}
+  .landing-card p.lede{font-size:16px;color:var(--text);margin-bottom:22px;}
+  .id-box{border:1px solid var(--line);border-left:4px solid var(--mustard);background:#FBF8EF;border-radius:4px;padding:14px 16px;margin:22px 0 26px 0;}
+  .id-box .label{font-size:10.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-soft);font-weight:bold;margin-bottom:6px;}
+  .id-box .code{font-family:'Courier New', monospace;font-size:20px;font-weight:bold;letter-spacing:0.05em;color:var(--green-deep);}
+  .id-box .note{font-size:12px;color:var(--text-soft);margin-top:6px;line-height:1.5;}
+  .privacy-list{font-size:13.5px;color:var(--text-soft);line-height:1.7;margin:0 0 26px 0;padding-left:20px;}
+  .privacy-list li{margin-bottom:4px;}
+
+  button{font-family:Arial, Helvetica, sans-serif;cursor:pointer;}
+  .btn{border:none;border-radius:4px;font-weight:bold;font-size:15px;padding:13px 26px;}
+  .btn-primary{background:var(--orange);color:#fff;}
+  .btn-primary:hover{background:var(--orange-deep);}
+  .btn-secondary{background:var(--panel);color:var(--green-deep);border:1px solid var(--green);}
+  .btn-secondary:hover{background:#EFF6F3;}
+
+  .notice{font-size:13px;color:var(--text-soft);line-height:1.55;padding:12px 15px;background:#F2EFE5;border:1px solid var(--line);border-radius:4px;margin:18px 0 4px 0;}
+  .notice b{color:var(--text);}
+  .error-banner{font-size:13px;color:#7A2415;line-height:1.5;padding:12px 14px;background:#FBE7DE;border:1px solid #EDBBA0;border-radius:4px;margin:18px 0 4px 0;}
+  #chat{flex:1;overflow-y:auto;padding:18px 0 12px 0;display:flex;flex-direction:column;gap:14px;}
+  .msg{max-width:85%;padding:13px 16px;border-radius:5px;font-size:14.5px;line-height:1.6;white-space:pre-wrap;}
+  .msg.user{align-self:flex-end;background:#EFF6F3;border:1px solid #D6E6DF;max-width:82%;}
+  .msg.assistant{align-self:flex-start;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--green);}
+  .msg.safety{align-self:flex-start;background:#FFF7E9;border:1px solid var(--mustard);border-left:3px solid var(--orange);}
+  .role-label{font-size:10px;letter-spacing:0.05em;text-transform:uppercase;font-weight:bold;display:block;margin-bottom:5px;color:var(--green-deep);}
+  .msg.user .role-label{color:var(--text-soft);}
+  .msg.safety .role-label{color:var(--orange-deep);}
+
+  .choice-row{display:flex;flex-wrap:wrap;gap:8px;align-self:flex-start;max-width:90%;}
+  .choice-btn{
+    background:var(--panel);border:1px solid var(--green);color:var(--green-deep);
+    border-radius:4px;padding:10px 15px;font-size:13.5px;font-weight:bold;text-align:left;
+  }
+  .choice-btn:hover{background:var(--green);color:#fff;}
+  .choice-btn.menu-btn{border-color:var(--line);color:var(--text);font-weight:normal;}
+  .choice-btn.menu-btn:hover{background:#F2EFE5;border-color:var(--text-soft);color:var(--text);}
+
+  .composer{display:flex;gap:10px;padding:14px 0 16px 0;border-top:1px solid var(--line);background:var(--bg);}
+  textarea{flex:1;resize:none;border:1px solid var(--line);border-radius:4px;padding:11px 13px;font-family:Arial, Helvetica, sans-serif;font-size:14.5px;line-height:1.4;background:var(--panel);color:var(--text);min-height:44px;max-height:140px;}
+  textarea:focus{outline:2px solid var(--green);outline-offset:1px;}
+  .send-btn{background:var(--green);color:#fff;padding:0 22px;border-radius:4px;font-weight:bold;font-size:14px;border:none;}
+  .send-btn:disabled{background:#A9BEB8;cursor:not-allowed;}
+  .send-btn:hover:not(:disabled){background:var(--green-deep);}
+
+  .footer-actions{display:flex;justify-content:space-between;align-items:center;padding:8px 0 20px 0;}
+  .end-link{background:none;border:none;color:var(--orange-deep);font-size:13px;font-weight:bold;text-decoration:underline;text-underline-offset:3px;}
+  .end-link:hover{color:var(--orange);}
+  .turn-count{font-family:'Courier New', monospace;font-size:11px;color:var(--text-soft);}
+
+  .end-screen{max-width:520px;margin:56px auto;padding:0 20px;text-align:left;}
+  .end-screen h2{font-size:25px;color:var(--green-deep);margin-bottom:10px;}
+  .end-screen p{color:var(--text-soft);font-size:14.5px;line-height:1.65;margin-bottom:24px;}
+  .tag{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--mustard);border-radius:4px;padding:20px 22px;margin-bottom:22px;}
+  .tag .eyebrow{font-size:10.5px;letter-spacing:0.06em;font-weight:bold;color:var(--text-soft);text-transform:uppercase;margin-bottom:10px;}
+  .tag .code{font-family:'Courier New', monospace;font-size:26px;font-weight:bold;letter-spacing:0.04em;color:var(--green-deep);border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);padding:14px 0;margin:6px 0 14px 0;user-select:all;}
+  .copy-btn{background:var(--bg);border:1px solid var(--line);color:var(--text);font-size:13px;font-weight:bold;padding:9px 16px;border-radius:4px;}
+  .copy-btn:hover{background:var(--line);}
+  .copy-btn.copied{background:var(--green);color:#fff;border-color:var(--green);}
+  .return-btn{display:inline-block;background:var(--orange);color:#fff;font-weight:bold;font-size:14.5px;padding:13px 24px;border-radius:4px;text-decoration:none;margin-top:4px;}
+  .return-btn:hover{background:var(--orange-deep);}
+  .instructions{font-size:13px;color:var(--text-soft);line-height:1.6;background:#F2EFE5;border:1px solid var(--line);border-radius:4px;padding:14px 16px;margin-top:24px;}
+  .instructions b{color:var(--text);}
+
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="mark"></span><h1>Workplace Advice &amp; Support</h1></div>
+  <div class="status-chip" id="statusText">Anonymous session</div>
+</div>
+
+<div id="app" class="wrap"></div>
+
+<script>
+/* ============================================================
+   RESEARCHER SETUP — edit these before fielding
+   ============================================================ */
+const WORKER_URL = "https://chatbotscripted.maryadelua35.workers.dev";
+const RETURN_TO_SURVEY_URL = "https://your-institution.qualtrics.com/jfe/form/YOUR_SURVEY_ID";
+/* ============================================================ */
+
+/* ============================================================
+   ADVICE LIBRARY — this is the whole "brain" of the scripted
+   chatbot. No AI model is called at runtime; everything below is
+   pre-written. Edit or extend this array to add more categories,
+   change wording, or adjust matching keywords.
+   ============================================================ */
+const CATEGORIES = [
+  {
+    id:"credit_stolen", label:"Someone taking credit for your work",
+    keywords:["credit","took credit","claimed my","stole my","my idea was used","presented my work"],
+    branchQuestion:"Is this a repeated pattern, or did it happen once?",
+    branchOptions:[
+      { label:"It's repeated", response:
+`This has a specific shape worth naming: whoever's doing this has learned it costs them nothing, and repetition is what tells you that. The fix that works best when it's repeated is pre-empting credit before the next opportunity, not correcting it after — after-the-fact correction reads as complaining, before-the-fact framing reads as normal collaboration.
+
+Try this before the next meeting or handoff where this could happen again: send a short note in writing — "Wanted to flag before today's meeting: the [X] analysis was mine, happy for you to present it, just want it clear whose work it is if anyone asks follow-ups." This puts your authorship on record and removes their easiest excuse ("I didn't think to mention it").
+
+If it happens again after that, you now have a paper trail, and the next step is a direct one-on-one conversation — not a public correction in the room where it just happened, which usually escalates rather than resolves. A workable opener: "I've noticed my work has been presented as yours a couple of times now — I want to figure out how we make sure that doesn't keep happening." That's a request for a system fix, not an accusation, which is easier for both of you to have.` },
+      { label:"It just happened once", response:
+`One instance is worth a direct, low-stakes conversation before you build a bigger story around it — it's genuinely possible they didn't register it as taking credit rather than just summarizing "the team's" work sloppily. Give it the benefit of the doubt once, but say something now rather than waiting to see if it repeats, because silence the first time is often read as consent for the second.
+
+A low-friction way to raise it: catch them one-on-one, not in a group, and say "Quick thing — in the meeting, the [X] idea was mine; wanted to make sure that's clear going forward, no big deal, just flagging it." That framing is easy to receive and doesn't force them to defend themselves in front of others.
+
+If their response is dismissive or they get defensive rather than just acknowledging it, that's useful information — it tells you whether this was a one-off oversight or the first data point in a pattern, and you'll know to start documenting from here if it happens again.` }
+    ]
+  },
+  {
+    id:"unclear_expectations", label:"Manager's expectations are vague or keep shifting",
+    keywords:["unclear","vague","don't know what they want","keeps changing","moving target","conflicting instructions","not clear what","mixed signals"],
+    branchQuestion:"Do you run into this mostly in writing (email, tickets, docs), or mostly in what's said out loud in meetings?",
+    branchOptions:[
+      { label:"Mostly in writing", response:
+`Vague written direction is usually fixable with one habit: reflecting the ask back in writing before you start, in your own words, with your interpretation spelled out as a specific deliverable. This does two things — it forces ambiguity to surface immediately instead of after you've done the work, and it creates a record of what was actually agreed to.
+
+Try replying to the next unclear request with something like: "To make sure I build the right thing — my read is you want [specific deliverable] by [date], covering [scope], and NOT covering [what you're intentionally excluding]. Confirming before I start." Most managers will either say "yes exactly" or correct one detail — either way, you've converted vague into specific before any work happens.
+
+If this keeps happening after you've tried that a few times, the pattern itself is worth naming directly: "I've noticed a few requests come through without much detail on scope — would it help if I sent a quick confirmation like this before starting, going forward?" That reframes it as a process improvement you're offering, not a complaint about them.` },
+      { label:"Mostly in meetings", response:
+`Verbal direction that shifts is harder to pin down because there's no record — which means the fix is creating one, in the moment, without making it awkward. At the end of any meeting where you get direction, summarize out loud before the meeting ends: "So to confirm, I'm doing [X], priority is [Y], and I'll check back in if [Z] changes anything — sound right?" This catches misalignment while everyone's still in the room, rather than a week later when it's expensive to unwind.
+
+Follow it with a two-line written recap sent right after — "Confirming from our chat: [bullet, bullet]." Not because you don't trust them, but because memory of verbal conversations is unreliable for everyone, including you, and the recap protects both of you.
+
+If expectations still shift after that, ask directly what changed: "Last week this was framed as top priority, now it sounds like it's on hold — did something change on your end, or did I misread the priority?" That's a genuine question, not a complaint, and it usually surfaces whether the shifting is about you or about pressure they're under that they haven't mentioned.` }
+    ]
+  },
+  {
+    id:"micromanaged", label:"Being micromanaged / not trusted with autonomy",
+    keywords:["micromanag","checks in constantly","doesn't trust me","watching every","cc'd on everything","approve everything","hovering"],
+    branchQuestion:"Has this always been the case with this manager, or did it start after something specific — a mistake, a change on the team, a new manager?",
+    branchOptions:[
+      { label:"Always been this way", response:
+`Some managers default to close oversight regardless of who they're managing — it's their operating style, not a verdict on you specifically, though it doesn't feel that way from the inside. The move that tends to work is proactively over-communicating in a lighter-weight format than they're currently forcing on you, so the check-ins become unnecessary rather than something you're pushing back on.
+
+Propose a standing structure: "Would it help if I sent you a quick two-line update every [morning/Friday] on where things stand, so you've got visibility without needing to check in as often?" This gives them the information they're actually anxious about missing, on a schedule you control, which is usually the real driver behind micromanagement — not distrust of your competence, but discomfort with not knowing status.
+
+If the offer doesn't reduce the check-ins over a few weeks, it's worth asking directly, calmly: "Is there something specific I could do that would make you comfortable checking in less often?" That question forces either a concrete answer you can act on, or an admission that it's not really about your performance — both are useful to know.` },
+      { label:"Started after something specific", response:
+`This is actually easier to fix than it feels, because you know the trigger — which means you can address the trigger directly instead of guessing. Oversight that ramps up after a mistake or a team change is usually about your manager's own risk exposure, not a permanent downgrade of how they see you.
+
+Name it directly, once, calmly: "I've noticed more check-ins since [the incident/change] — I want to earn back the same level of autonomy I had before. What would need to be true for you to feel comfortable stepping back?" This does something important: it puts the timeline and criteria in their hands explicitly, rather than leaving it as an open-ended, undefined probation you can't tell if you're passing.
+
+Then actually deliver against whatever they name, visibly, for a defined stretch (a month is usually enough to reset trust) — and if the oversight hasn't eased once you've cleared whatever bar they set, that's worth raising again directly rather than assuming it'll just fade on its own.` }
+    ]
+  },
+  {
+    id:"peer_conflict", label:"Ongoing tension with a coworker",
+    keywords:["coworker","colleague","teammate","clash","doesn't like me","personality conflict","friction with"],
+    branchQuestion:"Is this mostly about how they communicate with you, or about the two of you competing for the same opportunities, credit, or scope?",
+    branchOptions:[
+      { label:"Mostly communication style", response:
+`Pure style friction (someone blunt when you prefer diplomacy, or vice versa) usually isn't fixable by either person changing who they are — it's fixable by naming the mismatch explicitly so both of you can adjust the delivery without taking the content personally.
+
+A direct, low-drama way to raise it: "I think we just communicate pretty differently — you're more direct than I'm used to, and I probably come across more indirect than you'd like. Can we agree on a way to flag when something's landing wrong for either of us?" This isn't a complaint, it's a proposal for a working agreement, and most people respond well to being asked to collaborate on a fix rather than being told they're the problem.
+
+If a direct conversation feels too big a first step, start smaller: the next time something they say lands badly, try naming it in the moment rather than stewing on it — "that came across pretty blunt, was that intended?" — which is genuinely easier to say than it sounds and usually resets the tone immediately.` },
+      { label:"Competing for opportunities or credit", response:
+`This is a different problem than a personality clash, and it's worth treating it as one: when two people are genuinely competing for the same scope, credit, or visibility, interpersonal tactics alone won't fix it, because the underlying incentive structure is what's generating the friction.
+
+Two things help in parallel. First, get explicit with your manager about scope: "I want to make sure [colleague] and I aren't stepping on each other on [X] — can we get clear on who owns what?" This isn't tattling, it's asking for the structural fix that would remove the reason for the conflict. Managers often don't realize they've created overlapping ownership until someone names it.
+
+Second, with your colleague directly, if the relationship allows it: "I get the sense we're both going for the same things here — would it be worth figuring out a way to split this so we're not working against each other?" Not every relationship is safe enough for that conversation, and if it isn't, lean more heavily on the manager-level fix instead of trying to resolve it peer-to-peer.` }
+    ]
+  },
+  {
+    id:"excluded", label:"Being left out of meetings, threads, or decisions",
+    keywords:["excluded","left out","not invited","didn't loop me in","out of the loop","wasn't told","cut out of"],
+    branchQuestion:"Is this new or recent, or has it been going on for a while?",
+    branchOptions:[
+      { label:"New / recent", response:
+`Recent exclusion is worth checking rather than assuming — it's often an oversight (a new thread got created and someone forgot to add you) rather than a deliberate signal, and treating it as deliberate before you know can create a problem where there wasn't one.
+
+Start with a neutral, assumption-free check-in: "Noticed I wasn't on the [meeting/thread] for [X] — was that intentional, or should I be looped in going forward?" This gives whoever's responsible an easy, face-saving way to say "oops, adding you now" if it was an accident, while still surfacing it clearly if it wasn't.
+
+If the answer is vague or they don't actually add you back, that's your real signal — follow up once more, more directly: "I want to make sure I'm not missing things that affect my work — can we figure out what I should be included on going forward?" That converts it from a one-off question into a standing agreement you can point back to later.` },
+      { label:"Ongoing for months", response:
+`Sustained exclusion over months is a pattern, not an oversight, and it usually means someone made a decision — consciously or not — that you don't need to be in the room. The direct approach works better here than continuing to hint or wait for it to resolve on its own.
+
+Go to whoever controls the invite list (often your manager, sometimes the meeting owner directly) with a specific ask, not a vague complaint: "I've noticed I haven't been included in [specific meetings/threads] for a while now, and I think being there would help me [specific reason — stay ahead of changes affecting my work, avoid redoing things, etc.]. Can we add me going forward?" Anchoring it to a concrete reason makes it much easier to say yes to than "I feel left out," even if the feeling is real and legitimate.
+
+If you get pushback or a non-answer, ask directly what the reasoning was: "Is there a reason I haven't been included that I should know about?" Sometimes there's a real (even if debatable) rationale — team size, confidentiality — and knowing it changes what your next move should be.` }
+    ]
+  },
+  {
+    id:"underpaid", label:"Feeling underpaid / wanting to negotiate",
+    keywords:["underpaid","pay","raise","salary","compensation","market rate","paid less","asking for more money"],
+    branchQuestion:"Do you have actual market data on what this role should pay, or is it mostly a gut sense that you're underpaid?",
+    branchOptions:[
+      { label:"I have data", response:
+`Good — data is what actually moves these conversations, so lead with it rather than burying it in a broader case about your contributions. Compensation conversations go better when they're framed as closing a gap against a benchmark, not as a request for a favor.
+
+Bring the specific numbers to your manager directly: "Based on [source — Levels.fyi, Glassdoor, a recruiter conversation, a comparable offer], the market range for this role is [X-Y], and I'm currently at [Z]. I'd like to talk about closing that gap." Naming the source matters — it signals you did real homework, not just a feeling.
+
+Pair the number with impact, briefly — one or two concrete outcomes from the last cycle, not a full performance review recap — then ask directly what the path looks like: "What would need to be true for us to get me to [target] — is that a conversation for now, or does it need to wait for the next cycle?" That question forces a concrete answer (yes, no, or a defined timeline) rather than a vague "we'll see," which is the answer that tends to go nowhere.` },
+      { label:"Just a gut sense", response:
+`Before you raise this, spend 30-60 minutes converting the gut sense into something specific — the conversation is dramatically stronger with a number attached, and right now you don't have one to anchor to. Free sources like Levels.fyi, Glassdoor, or even a couple of casual conversations with people in similar roles elsewhere can get you a workable range fast.
+
+Once you have a rough number, the ask itself is straightforward: "I've been looking into market rates for this role and I think there's a gap between that and where I'm at — can we set up time to talk through compensation?" You don't need certainty, just enough of a data point to make the conversation concrete instead of a feeling you're asking them to just believe.
+
+If you genuinely can't get external data, internal equity is a fallback angle: ask your manager directly what the range for your level is at this company, and where you sit in it — "Where do I fall in the band for this role, and what would move me up in it?" That question is reasonable to ask regardless of what you know externally, and most managers can answer it.` }
+    ]
+  },
+  {
+    id:"promotion_passed", label:"Passed over for a promotion",
+    keywords:["passed over","didn't get promoted","promotion","someone else got promoted","denied promotion"],
+    branchQuestion:"Did you get specific reasons for the decision, or basically just a no?",
+    branchOptions:[
+      { label:"Got specific reasons", response:
+`Specific reasons are actually the useful outcome here, even though it doesn't feel like it right now — it means you have something concrete to work against instead of guessing. The next move is converting those reasons into a plan with your manager, in writing, rather than just absorbing the feedback and hoping it improves on its own.
+
+Go back with something like: "I want to make sure I'm clear on what would need to be true for the promotion case to succeed next cycle — can we write down the specific things you named and check in on them regularly, not just at the next review?" This does two things: it commits your manager to a concrete bar rather than a vague sense of "not quite ready," and it gives you regular checkpoints instead of finding out again in a year that it didn't happen.
+
+If any of the reasons given felt vague even though they were framed as specific ("needs more leadership presence," "not quite senior enough yet"), push once for concreteness: "Can you give me an example of what that would look like in practice, so I know what to aim for?" Vague growth areas are the ones that quietly never get resolved.` },
+      { label:"Just a no, no real explanation", response:
+`A no without real reasoning is worth pushing on once, directly — not combatively, but because you genuinely can't act on "not this time" the way you could act on specific feedback, and you're entitled to ask for something you can work with.
+
+Try: "I want to understand this better so I know what to work toward — can you help me understand specifically what stood between me and the promotion this cycle?" If you get another vague answer, ask a narrower follow-up: "If there were one or two things that would have the biggest impact on the decision next time, what would they be?" Narrowing the question sometimes gets past a manager's own discomfort with giving direct feedback.
+
+If you still can't get anything concrete after asking directly, that itself is informative — it may mean the decision wasn't really about a specific gap in you, but about budget, headcount, or other people's cases outranking yours this cycle. Worth asking that directly too: "Was this more about my case, or more about constraints on the number of promotions this cycle?" The honest answer changes whether more effort on your part will actually move the outcome next time.` }
+    ]
+  },
+  {
+    id:"career_stuck", label:"Career feels stagnant, no growth path",
+    keywords:["stuck","stagnant","no growth","going nowhere","plateau","same role for years","no path forward"],
+    branchQuestion:"Is the ceiling more about the role itself having no room to grow, or more that your manager isn't advocating for you?",
+    branchOptions:[
+      { label:"The role itself has no room", response:
+`If the role structurally has nowhere to go — no more senior version of it exists on this team, or the team's too small to ever need one — the honest move is confirming that rather than continuing to hope it'll open up on its own, because working hard toward a ceiling that doesn't exist is how years quietly disappear.
+
+Ask your manager directly: "Realistically, is there a path for this role to grow here, or would growth mean moving to a different team or function?" This is a fair, non-confrontational question, and a good manager will give you a straight answer even if it's not the one you want.
+
+If the honest answer is "not really, not here," that's not necessarily a reason to leave the company — ask about lateral moves: "If growth isn't really available in this role, are there other teams where it would be?" Internal moves are often easier to get than promotions in a role that's capped, and they reset the growth trajectory without you having to leave. If neither internal growth nor a lateral move is realistically on the table, that's useful, if unwelcome, information for deciding whether to look outside.` },
+      { label:"My manager isn't advocating for me", response:
+`This is a more fixable problem than a structurally capped role, because it's about one relationship rather than the whole org chart — but it does require you to stop waiting for advocacy to happen on its own and start asking for it directly, since some managers genuinely don't realize they haven't been doing it.
+
+Name it plainly in a one-on-one: "I want to grow here, and I'm not sure how visible my work is above you — can you help me understand what you've been able to advocate for on my behalf, and what would help you do more of that?" This isn't an accusation, it's a direct ask for information plus a specific favor, and it's much harder to ignore than a vague sense that you're not getting attention.
+
+If the pattern continues after that conversation, start building visibility that doesn't route entirely through your manager — sharing wins directly in broader channels where appropriate, building relationships with your manager's peers or their manager through legitimate work interactions. That's not going around your manager, it's insurance against a single point of failure in your own visibility.` }
+    ]
+  },
+  {
+    id:"burnout", label:"Burnout, overwork, unsustainable pace",
+    keywords:["burnout","burned out","exhausted","overworked","can't keep up","too much work","no time off","running on empty"],
+    branchQuestion:"Is the raw amount of work too much, or is it more that it never turns off — always-on, no real boundaries around time?",
+    branchOptions:[
+      { label:"Raw workload is too high", response:
+`When the volume itself is the problem, the fix has to happen at the workload level, not the coping-strategy level — better time management doesn't solve a fundamentally unsustainable amount of work, and treating it like it will just delays the real conversation.
+
+Bring your manager concrete numbers, not just a feeling: "Here's what's currently on my plate: [list], and here's roughly how much time each takes. I don't think this is sustainable at this volume — can we talk about what gets deprioritized or reassigned?" Naming specific items forces a specific decision, rather than a general "try to manage your time better," which doesn't actually remove anything from your plate.
+
+If your manager pushes back on there being too much, ask them directly to rank it: "If you had to rank these by priority, what would you cut first if something has to give?" That question does two things — it forces them to actually engage with the volume rather than wave it away, and if they genuinely can't identify anything to cut, that itself is useful evidence the workload really is the issue, not your efficiency.` },
+      { label:"It never turns off", response:
+`An always-on culture is often more about unclear boundaries than actual required hours — messages get answered at 9pm because someone did it once and it became the assumed norm, not because the work truly requires it. The fix usually starts with you setting a boundary explicitly rather than waiting for permission that may never come unprompted.
+
+Pick a concrete boundary and state it plainly, once: "I'm going to stop checking messages after [time] except for genuine emergencies — wanted to flag that so it's not a surprise." Most reasonable managers will not push back on a boundary stated this directly and calmly; the ones who do are giving you useful information about the actual expectations, not just the stated ones.
+
+If you're worried this will be read badly, pair it with reassurance about coverage: "If something's truly urgent, here's how to reach me [specific channel] — otherwise it'll wait until morning." This shows you're not disappearing, just drawing a line, which is much easier for others to accept than an unexplained sudden unavailability.` }
+    ]
+  },
+  {
+    id:"negative_review", label:"Received harsh or unfair performance feedback",
+    keywords:["bad review","performance review","negative feedback","harsh feedback","review was","put on a pip","pip","poor rating"],
+    branchQuestion:"Do you think the feedback is basically fair, even if it was delivered harshly, or do you think it's actually wrong or unfair?",
+    branchOptions:[
+      { label:"Fair, but harshly delivered", response:
+`If the substance is fair even though the delivery stung, it's worth separating those two things explicitly rather than letting the harsh tone make you dismiss feedback that's actually accurate — that's a common trap, and it costs you the chance to actually improve on something real.
+
+Once you've had a day or two to let the sting fade, go back with something like: "I've had some time to sit with the feedback, and I want to make sure I'm acting on it well — can we talk through what specific change would look like in practice?" This shows you took it seriously rather than getting defensive, which itself tends to reset the relationship somewhat even after a harsh delivery.
+
+Separately, if the delivery itself was genuinely harsh — not just direct, but disrespectful — that's worth naming too, once things have settled: "The content was useful, but I want to mention the delivery felt harsher than I think was intended — wanted to flag that for future conversations." You can accept feedback and still ask for a better process next time; those aren't in conflict.` },
+      { label:"I think it's wrong", response:
+`If you genuinely believe the assessment is inaccurate, the move is to respond with specifics, not with emotion or a blanket "I disagree" — vague pushback is easy to dismiss, specific counter-examples are much harder to.
+
+Prepare concrete evidence before the next conversation: actual examples, dates, outcomes that contradict the specific claims made in the review. Then request a follow-up conversation rather than relitigating it in the moment you first heard it, when you're likely still reacting emotionally: "I'd like to set up time to walk through a few specific points in the review where I have a different read, with some examples — can we find time this week?"
+
+In that conversation, go point by point rather than arguing the overall verdict: "On [specific claim], here's what actually happened: [example]." This is much more persuasive than "I don't think that's fair," and it also creates a record, which matters if this ever needs to go further — to HR, to a skip-level, or into a formal dispute process if your organization has one.` }
+    ]
+  },
+  {
+    id:"give_feedback", label:"Needing to give someone else difficult feedback",
+    keywords:["give feedback","tell them","hard conversation","underperforming","need to tell my","confront","address with someone"],
+    branchQuestion:"Is this person a peer, or someone who reports to you?",
+    branchOptions:[
+      { label:"A peer", response:
+`Peer feedback is trickier than manager-to-report feedback because you don't have positional authority behind it — which means tone and framing matter even more, and it works best delivered as an observation with impact, not a verdict on them as a person.
+
+A workable structure: name the specific behavior, name its concrete effect, then ask rather than instruct. "When [specific thing] happens, it results in [specific impact on the work/team] — I wanted to mention it because I think you'd want to know. Is that something you're aware of?" Ending with a question rather than a directive keeps it collaborative and gives them room to respond without feeling cornered.
+
+Pick a private, low-stakes moment — not right after the behavior happened if emotions are high, not in front of others regardless of timing. If the relationship is strong enough, you can be more direct; if it's newer or more fragile, soften the opener but keep the specifics concrete — vague peer feedback ("just wanted to check in on how things are going") tends to get missed entirely.` },
+      { label:"Someone who reports to me", response:
+`With a direct report, you have more standing to be specific and directive, and vague feedback here does real damage — it either doesn't register as feedback at all, or it registers as a vague sense of disapproval without anything actionable attached, which is worse than no feedback.
+
+Use a simple structure: specific behavior, specific impact, specific expectation going forward. "In [situation], [specific thing] happened, which resulted in [specific impact]. Going forward, I need [specific expectation]." Then stop talking and let them respond — resist the urge to soften it into vagueness once you've said the hard part clearly.
+
+Set a concrete follow-up: "Let's check in on this in [two weeks/a month] to see how it's going." This does two important things — it signals you're invested in them improving, not just documenting a problem, and it creates the paper trail you'd need if the issue doesn't improve and this eventually needs to become a formal performance conversation. Document what was said and when, right after the conversation, while it's fresh.` }
+    ]
+  },
+  {
+    id:"toxic_culture", label:"Team or company culture feels toxic or political",
+    keywords:["toxic","political","backstabbing","gossip","cliques","toxic culture","office politics"],
+    branchQuestion:"Does this feel like it's mostly one or two specific people, or does it feel systemic across the whole team or company?",
+    branchOptions:[
+      { label:"One or two specific people", response:
+`When it's concentrated in a couple of people rather than the whole environment, you have more leverage than it might feel like — the goal is minimizing your exposure to the specific dynamics they create, without letting them define your entire experience of the job.
+
+Where possible, reduce unstructured, informal contact with them and shift toward more documented, direct interactions — written requests instead of hallway conversations, cc'ing relevant people on decisions rather than relying on verbal agreements that can get twisted later. This isn't about being adversarial, it's about reducing the surface area for the behavior that's causing problems.
+
+If their behavior is actively affecting your work — not just your mood, but concrete outcomes — that's worth raising with your manager in specific, factual terms: "I've noticed a pattern with [person] around [specific behavior, specific instances], and it's affecting [specific impact]. I wanted to flag it." Stick to observable facts rather than characterizations ("toxic," "backstabbing") when you raise it formally — the factual version is much harder to dismiss and much more actionable for whoever you're raising it with.` },
+      { label:"Feels systemic", response:
+`Systemic culture problems are harder to fix from an individual contributor position, and it's worth being honest with yourself about that rather than exhausting yourself trying to personally repair a whole team's dynamics — that's usually not a fight one person wins alone.
+
+What is within your control: protecting your own reputation and conduct regardless of what's happening around you, being selective about who you trust with sensitive information, and documenting anything that could matter later (specific incidents, dates, who was involved) even if you're not sure yet whether you'll use it.
+
+If you have any standing to raise it — a skip-level relationship, an engaged HR function, a genuinely safe manager — a factual pattern report is more likely to land than a general complaint about "the culture": "I've noticed a pattern of [specific behaviors, specific examples] across the team, not just isolated incidents — wanted to make sure this was visible." If none of those channels feel safe or likely to change anything, it's reasonable to treat this as information about whether this is a place you want to keep investing your energy in long-term, separate from any single interpersonal fix.` }
+    ]
+  },
+  {
+    id:"quitting", label:"Weighing whether to leave your job",
+    keywords:["quit","resign","leave my job","should i stay","thinking of leaving","looking for a new job"],
+    branchQuestion:"Do you already have another offer or option lined up, or is this leave-without-a-plan territory?",
+    branchOptions:[
+      { label:"I have another option", response:
+`With an actual option in hand, this becomes a comparison problem rather than a leap-of-faith problem, which is a much easier decision to make well — the trap here is deciding based on how bad the current job feels in the moment rather than a clear-eyed comparison of the two paths.
+
+Write out, concretely, what specifically is pushing you out of the current role versus what's genuinely pulling you toward the new one — those are often different things, and conflating them leads to bad decisions (leaving a bad situation for a mediocre one just because anything feels better than the current pain). Ask yourself directly: if the current situation improved on its worst point, would you still want to leave?
+
+If you're genuinely torn, it's reasonable to have one direct conversation with your current manager before deciding, especially if there's a fixable issue at the root of your dissatisfaction: "I want to be transparent — I'm seriously considering an opportunity elsewhere, largely because of [specific issue]. Is there anything realistic that could change on that front?" This isn't a bluff or a negotiating tactic if you mean it genuinely — it's information-gathering that could change the decision, and it costs you little to ask directly.` },
+      { label:"No plan yet, just done", response:
+`Wanting to leave without a landing spot yet is a real and valid feeling, but it's worth separating the decision to eventually leave from the decision to leave right now without anything lined up — those don't have to happen at the same time, and rushing the second one under the weight of the first often leads to worse outcomes.
+
+Before doing anything irreversible, get specific about what's actually driving this: is it this role, this manager, this company, or work in general right now? The answer changes what the right next move is — a role change, an internal transfer, or genuinely needing a break are different problems with different fixes, even though they can all feel like "I need to quit" in the moment.
+
+If you can financially and practically sustain it, searching while still employed is almost always the stronger position — you're negotiating from stability rather than urgency, and you're not forced to accept the first offer that comes along out of financial pressure. If staying feels genuinely unsustainable even for the time it takes to search, that's a different and more urgent situation — worth being honest with yourself about which one this actually is before deciding the timeline.` }
+    ]
+  },
+  {
+    id:"ethical_dilemma", label:"Being asked to do something that feels wrong",
+    keywords:["unethical","asked me to lie","asked to falsify","against my values","cross a line","cook the books","not comfortable","asked me to cover"],
+    branchQuestion:"Is this a one-time ask, or does it feel like a pattern at this company?",
+    branchOptions:[
+      { label:"One-time ask", response:
+`A single instance is worth taking seriously without immediately assuming the worst about the company or the person asking — sometimes a one-off ask like this comes from someone under pressure making a bad call in a moment, not from a systemically corrupt organization, and how you respond can matter for both your own position and theirs.
+
+Push back directly but without immediately escalating: "I'm not comfortable doing [specific thing] because [specific reason] — can we find another way to handle this?" Often, naming the discomfort directly and offering to problem-solve together is enough to redirect the request, especially if the person asking hadn't fully thought through what they were asking.
+
+If they push back and insist, or make clear this isn't optional, that's the point to get it in writing if you haven't already — ask them to confirm the request over email or a written channel rather than just verbally, which naturally makes both of you think harder about whether it's actually reasonable, and protects you either way. If the request genuinely involves something illegal or clearly unethical rather than just uncomfortable, that moves beyond interpersonal tactics into territory worth taking to HR, compliance, or legal counsel directly — not something to resolve one-on-one.` },
+      { label:"Feels like a pattern", response:
+`A pattern is a materially different situation than a one-time bad ask, and it changes the calculus — at this point it's less about managing one uncomfortable conversation and more about deciding what your own exposure and responsibility look like if this continues, and what formal channels are available to you.
+
+Start documenting specifically and privately — dates, what was asked, by whom, in what words, and ideally in writing where possible (redirect verbal asks to email when you can: "Just to make sure I've got this right, can you confirm over email?"). This protects you regardless of what you decide to do next, and it's the kind of record that matters enormously if this ever needs to go further.
+
+This is the point to seriously consider your company's formal channels — an ethics hotline, compliance function, HR, or in some cases external legal counsel if what's being asked could expose you to real legal or professional risk. Interpersonal conversation alone isn't the right tool for a genuine pattern of unethical requests; formal reporting mechanisms exist specifically for this, and using them isn't disloyalty, it's the appropriate response to what you're describing.` }
+    ]
+  },
+  {
+    id:"harassment_safety", label:"Harassment, discrimination, or safety concerns",
+    keywords:["harassment","harassing","discriminat","assault","unsafe","threatened","retaliat","hostile work environment","inappropriate comment","inappropriate touching","sexual comment","bully","bullying"],
+    direct:
+`I want to be direct with you: this isn't something to resolve through interpersonal tactics or a carefully worded conversation, and I'd be doing you a disservice trying to hand you a script for it the way I would for a communication-style clash. Situations involving harassment, discrimination, retaliation, or safety concerns are exactly what formal channels exist for.
+
+Practical next steps: document what happened as specifically as you can, as soon as you can — dates, times, what was said or done, who else was present, and keep that documentation somewhere outside of company systems in case you lose access to them later. Most organizations have a formal reporting channel — HR, an ethics hotline, or a designated compliance contact — check your employee handbook or intranet for the specific process at your company. If your company doesn't have a functioning channel, or you don't trust it, external options exist too: in the US, the Equal Employment Opportunity Commission (EEOC) handles workplace discrimination and harassment complaints, and an employment attorney can advise on your specific situation and rights, often with an initial consultation at low or no cost.
+
+If there's any immediate safety concern, please prioritize your physical safety first — that takes precedence over any of the reporting process above. I'm not able to give legal advice, and I'd genuinely rather point you toward people who can than pretend a conversation script is the right tool here.`
+  }
+];
+
+const CRISIS_KEYWORDS = ["suicide","kill myself","want to die","end my life","hurt myself","not want to be alive","don't want to be here anymore","ending it"];
+
+const SCRIPT_HELPER =
+`Here's a simple structure that works across most of these conversations: state the specific fact (what happened, plainly, no interpretation), state the concrete impact (what it caused — on the work, on you, on the team), then state a specific ask (what you want to happen differently). Keeping those three separate, in that order, is what makes a hard conversation land as constructive rather than as a complaint or an attack — most difficult workplace conversations go sideways when impact and interpretation get blended together, or when the ask is left vague or unstated entirely.`;
+
+function matchCategory(text){
+  const lower = text.toLowerCase();
+  let best = null, bestScore = 0;
+  CATEGORIES.forEach(cat=>{
+    let score = 0;
+    cat.keywords.forEach(k=>{ if(lower.includes(k)) score++; });
+    if(score > bestScore){ bestScore = score; best = cat; }
+  });
+  return bestScore > 0 ? best : null;
+}
+function checkCrisis(text){
+  const lower = text.toLowerCase();
+  return CRISIS_KEYWORDS.some(k => lower.includes(k));
+}
+
+/* ============================================================ */
+
+function genId(){
+  const alphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  let s = "";
+  const arr = new Uint32Array(8);
+  crypto.getRandomValues(arr);
+  for(let i=0;i<8;i++) s += alphabet[arr[i] % alphabet.length];
+  return "WPS-" + s;
+}
+
+const params = new URLSearchParams(window.location.search);
+let pid = params.get("pid");
+
+let session = { pid: null, status: "active", messages: [] };
+let ended = false;
+let loadError = null;
+let onLanding = true;
+let hasReceivedAdvice = false;
+
+// interaction state machine: 'describe' | 'confirm' | 'menu' | 'branch' | 'response'
+let stage = "describe";
+let pendingCategory = null;
+
+async function api(path, opts){
+  const resp = await fetch(WORKER_URL + path, opts);
+  if(!resp.ok){
+    const body = await resp.json().catch(()=>({}));
+    throw new Error(body.error || ("Request failed: " + resp.status));
+  }
+  return resp.json();
+}
+
+async function logTranscript(){
+  try{ await api("/api/log", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ pid, messages: session.messages }) }); }
+  catch(e){ console.error(e); }
+}
+
+async function initSession(){
+  if(pid){
+    try{
+      const existing = await api("/api/session?pid=" + encodeURIComponent(pid), { method:"GET" });
+      session = existing;
+      if(session.status === "completed") ended = true;
+      if(session.messages.length > 0){ onLanding = false; hasReceivedAdvice = true; stage = "describe"; }
+      return;
+    }catch(e){ /* not found — start fresh under this id */ }
+  } else {
+    pid = genId();
+    history.replaceState(null, "", "?pid=" + pid);
+  }
+  session = { pid, status: "active", messages: [] };
+  try{
+    await api("/api/start", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ pid }) });
+  }catch(e){
+    loadError = "Couldn't connect to the study server. Check your connection and reload the page.";
+    console.error(e);
+  }
+}
+
+function pushMsg(role, content, cssClass){
+  session.messages.push({ role, content, ts: new Date().toISOString(), _cls: cssClass || null });
+}
+
+function render(){
+  const app = document.getElementById("app");
+  if(ended){ renderEndScreen(app); return; }
+  if(onLanding){ renderLanding(app); return; }
+  renderChat(app);
+}
+
+function renderLanding(app){
+  app.innerHTML = `
+    <div class="landing">
+      <div class="landing-card">
+        <h2>Welcome to this workplace advice and support space.</h2>
+        <p class="lede">I'm here to help you think through a real workplace situation &mdash; a difficult relationship, a career decision, a conflict you're not sure how to handle. Tell me what's going on and I'll work through it with you.</p>
+        <div class="id-box">
+          <div class="label">Your anonymous session code</div>
+          <div class="code">${pid}</div>
+          <div class="note">This code, not your name, is what identifies this conversation. You'll be asked to copy it again at the end.</div>
+        </div>
+        <ul class="privacy-list">
+          <li>Nothing you type here is linked to your name, email, or employer.</li>
+          <li>Your conversation is recorded for research purposes only.</li>
+          <li>You can end the session once you've received at least one piece of advice.</li>
+        </ul>
+        ${loadError ? `<div class="error-banner" style="margin:0 0 20px 0;">${loadError}</div>` : ""}
+        <button class="btn btn-primary" id="beginBtn" ${loadError?"disabled":""}>Begin conversation</button>
+      </div>
+    </div>
+  `;
+  const btn = document.getElementById("beginBtn");
+  if(btn) btn.addEventListener("click", ()=>{
+    onLanding = false;
+    pushMsg("assistant", "Tell me what's going on, in your own words — as much detail as you're comfortable sharing. If it's easier, you can also just browse categories directly.");
+    logTranscript();
+    render();
+  });
+}
+
+function renderChat(app){
+  const showInput = stage === "describe";
+  app.innerHTML = `
+    ${loadError ? `<div class="error-banner">${loadError}</div>` : ""}
+    <div id="chat"></div>
+    <div id="interactionRow"></div>
+    <div class="composer" style="${showInput?'':'display:none;'}">
+      <textarea id="input" placeholder="Describe what's going on..." rows="1"></textarea>
+      <button class="send-btn" id="sendBtn">Send</button>
+    </div>
+    <div class="footer-actions">
+      <span class="turn-count">${session.messages.filter(m=>m.role==="user").length} message${session.messages.filter(m=>m.role==="user").length===1?"":"s"} sent</span>
+      <button class="end-link" id="endBtn" ${hasReceivedAdvice?"":"disabled style='opacity:0.4;cursor:not-allowed;text-decoration:none;'"}>
+        ${hasReceivedAdvice ? "End session and get my code →" : "Get one response to unlock End session"}
+      </button>
+    </div>
+  `;
+
+  const chat = document.getElementById("chat");
+  session.messages.forEach(m=>{
+    const div = document.createElement("div");
+    const cls = m._cls ? m._cls : (m.role === "user" ? "user" : "assistant");
+    div.className = "msg " + cls;
+    const roleText = m.role === "user" ? "You" : (cls === "safety" ? "Assistant — important note" : "Assistant");
+    div.innerHTML = `<span class="role-label">${roleText}</span>${escapeHtml(m.content)}`;
+    chat.appendChild(div);
+  });
+  chat.scrollTop = chat.scrollHeight;
+
+  renderInteraction();
+
+  if(showInput){
+    const input = document.getElementById("input");
+    const sendBtn = document.getElementById("sendBtn");
+    input.addEventListener("keydown", e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); handleDescribeSend(); } });
+    input.addEventListener("input", ()=>{ input.style.height="auto"; input.style.height=Math.min(input.scrollHeight,140)+"px"; });
+    sendBtn.addEventListener("click", handleDescribeSend);
+    input.focus();
+  }
+  if(hasReceivedAdvice){
+    const endBtn = document.getElementById("endBtn");
+    if(endBtn) endBtn.addEventListener("click", handleEndSession);
+  }
+}
+
+function renderInteraction(){
+  const row = document.getElementById("interactionRow");
+  if(!row) return;
+  row.innerHTML = "";
+
+  if(stage === "confirm" && pendingCategory){
+    row.appendChild(choiceRow([
+      { label: "Yes, that's it", onClick: ()=>{ pushMsg("user", "Yes, that's it"); goToBranchOrDirect(pendingCategory); render(); } },
+      { label: "No — let me pick from a list", onClick: ()=>{ pushMsg("user", "No, let me pick"); stage="menu"; render(); } }
+    ]));
+  } else if(stage === "menu"){
+    const btns = CATEGORIES.map(cat => ({
+      label: cat.label,
+      menu: true,
+      onClick: ()=>{ pushMsg("user", "[Selected] " + cat.label); goToBranchOrDirect(cat); render(); }
+    }));
+    row.appendChild(choiceRow(btns));
+  } else if(stage === "branch" && pendingCategory){
+    row.appendChild(choiceRow(pendingCategory.branchOptions.map(opt => ({
+      label: opt.label,
+      onClick: ()=>{
+        pushMsg("user", opt.label);
+        pushMsg("assistant", opt.response);
+        hasReceivedAdvice = true;
+        stage = "followup";
+        logTranscript();
+        render();
+      }
+    }))));
+  } else if(stage === "followup"){
+    row.appendChild(choiceRow([
+      { label:"Help me script exactly what to say", onClick: ()=>{ pushMsg("user","[Selected] Help me script what to say"); pushMsg("assistant", SCRIPT_HELPER); stage="followup2"; logTranscript(); render(); } },
+      { label:"This isn't quite my situation — try again", onClick: ()=>{ pushMsg("user","[Selected] Try a different topic"); stage="describe"; pushMsg("assistant","No problem — tell me more, or describe a different situation entirely."); logTranscript(); render(); } },
+      { label:"That's helpful, I'm ready to move on", onClick: ()=>{ pushMsg("user","[Selected] Ready to move on"); pushMsg("assistant","Glad that helped. Feel free to bring up another situation, or end the session whenever you're ready using the button below."); stage="describe"; logTranscript(); render(); } }
+    ]));
+  } else if(stage === "followup2"){
+    row.appendChild(choiceRow([
+      { label:"Bring up another situation", onClick: ()=>{ pushMsg("user","[Selected] Bring up another situation"); stage="describe"; pushMsg("assistant","Go ahead — describe what's going on."); logTranscript(); render(); } },
+      { label:"I'm ready to end the session", onClick: ()=>{ stage="describe"; render(); } }
+    ]));
+  }
+}
+
+function choiceRow(items){
+  const wrap = document.createElement("div");
+  wrap.className = "choice-row";
+  items.forEach(it=>{
+    const b = document.createElement("button");
+    b.className = "choice-btn" + (it.menu ? " menu-btn" : "");
+    b.textContent = it.label;
+    b.addEventListener("click", it.onClick);
+    wrap.appendChild(b);
+  });
+  return wrap;
+}
+
+function goToBranchOrDirect(cat){
+  pendingCategory = cat;
+  if(cat.direct){
+    pushMsg("assistant", cat.direct, "safety");
+    hasReceivedAdvice = true;
+    stage = "followup";
+    logTranscript();
+  } else {
+    pushMsg("assistant", cat.branchQuestion);
+    stage = "branch";
+    logTranscript();
+  }
+}
+
+function escapeHtml(str){ const d=document.createElement("div"); d.innerText=str; return d.innerHTML; }
+
+async function handleDescribeSend(){
+  const input = document.getElementById("input");
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = ""; input.style.height = "auto";
+
+  pushMsg("user", text);
+
+  if(checkCrisis(text)){
+    pushMsg("assistant",
+`I want to pause here rather than continue with situational advice. What you're describing sounds like it may go beyond a workplace issue, and I'm not the right support for that. If you're in the US, the 988 Suicide & Crisis Lifeline is available by call or text, any time. If you're outside the US, please look up your local crisis line, or reach out to someone you trust right now. If you're in immediate danger, please contact emergency services.
+
+If you'd still like to talk through a workplace situation separately, I'm here for that whenever you're ready.`, "safety");
+    stage = "describe";
+    logTranscript();
+    render();
+    return;
+  }
+
+  const match = matchCategory(text);
+  if(match){
+    pendingCategory = match;
+    pushMsg("assistant", `It sounds like this might be about: **${match.label}** — is that right?`);
+    stage = "confirm";
+  } else {
+    pushMsg("assistant", "I want to make sure I point you toward the right advice rather than guess — could you pick the closest category below?");
+    stage = "menu";
+  }
+  logTranscript();
+  render();
+}
+
+async function handleEndSession(){
+  try{ await api("/api/end", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ pid }) }); }
+  catch(e){ console.error(e); }
+  ended = true;
+  render();
+}
+
+let copyTimeout;
+function copyCode(){
+  navigator.clipboard.writeText(pid).then(()=>{
+    const btn = document.getElementById("copyBtn");
+    btn.textContent = "Copied ✓"; btn.classList.add("copied");
+    clearTimeout(copyTimeout);
+    copyTimeout = setTimeout(()=>{ btn.textContent="Copy code"; btn.classList.remove("copied"); }, 2000);
+  });
+}
+
+function renderEndScreen(app){
+  document.getElementById("statusText").textContent = "Session ended";
+  app.innerHTML = `
+    <div class="end-screen">
+      <h2>That's the end of this session.</h2>
+      <p>Copy your code below, then return to the survey and paste it into the next question. This is the only way your conversation can be matched to your survey answers &mdash; without it, your responses can't be linked.</p>
+      <div class="tag">
+        <div class="eyebrow">Your anonymous session code</div>
+        <div class="code" id="codeDisplay">${pid}</div>
+        <button class="copy-btn" id="copyBtn">Copy code</button>
+      </div>
+      <a class="return-btn" href="${RETURN_TO_SURVEY_URL}">Return to survey →</a>
+      <div class="instructions"><b>Next step:</b> once back in the survey, paste this exact code &mdash; <b>${pid}</b> &mdash; into the box asking for your session code. Double-check it matches before continuing.</div>
+    </div>
+  `;
+  document.getElementById("copyBtn").addEventListener("click", copyCode);
+}
+
+(async function init(){
+  await initSession();
+  render();
+})();
+</script>
+</body>
+</html>
