@@ -194,7 +194,7 @@ function renderGate(errorMsg){
   btn.addEventListener("click", tryUnlock);
   input.addEventListener("keydown", e=>{ if(e.key==="Enter") tryUnlock(); });
   input.focus();
-  
+}
 function renderMain(){
   const app = document.getElementById("app");
   const filtered = sessions.filter(s => s.pid.toLowerCase().includes(searchTerm.toLowerCase()));
