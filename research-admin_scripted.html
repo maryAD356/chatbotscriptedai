@@ -158,9 +158,20 @@ function computeStatus(s){
 function statusLabel(st){ return st === "completed" ? "Completed" : st === "dropped" ? "Dropped off" : "Active"; }
 
 async function fetchSessions(){
-  const r = await fetch(WORKER_URL + "/api/admin/sessions", { headers: { "X-Admin-Pass": adminPass } });
+  let r;
+  try{
+    r = await fetch(WORKER_URL + "/api/admin/sessions", { headers: { "X-Admin-Pass": adminPass } });
+  }catch(networkErr){
+    // This branch only fires for genuine network/CORS/DNS failures —
+    // the request never reached the server at all.
+    throw new Error("network:" + networkErr.message);
+  }
   if(r.status === 401) throw new Error("unauthorized");
-  if(!r.ok) throw new Error("Request failed: " + r.status);
+  if(!r.ok){
+    let bodyText = "";
+    try{ bodyText = await r.text(); }catch(_){}
+    throw new Error("http:" + r.status + (bodyText ? " — " + bodyText.slice(0,200) : ""));
+  }
   return r.json();
 }
 
@@ -189,12 +200,20 @@ function renderGate(errorMsg){
     btn.disabled = true; btn.textContent = "Checking...";
     adminPass = pass;
     try{ sessions = await fetchSessions(); renderMain(); }
-    catch(e){ renderGate(e.message === "unauthorized" ? "That passphrase doesn't match. Try again." : "Couldn't reach the study server."); }
+    catch(e){
+      let msg;
+      if(e.message === "unauthorized") msg = "That passphrase doesn't match. Try again.";
+      else if(e.message.startsWith("network:")) msg = "Network/CORS error — couldn't reach the Worker at all. Details: " + e.message.slice(8);
+      else if(e.message.startsWith("http:")) msg = "Worker responded with an error. Details: " + e.message.slice(5);
+      else msg = "Unexpected error: " + e.message;
+      renderGate(msg);
+    }
   };
   btn.addEventListener("click", tryUnlock);
   input.addEventListener("keydown", e=>{ if(e.key==="Enter") tryUnlock(); });
   input.focus();
 }
+
 function renderMain(){
   const app = document.getElementById("app");
   const filtered = sessions.filter(s => s.pid.toLowerCase().includes(searchTerm.toLowerCase()));
